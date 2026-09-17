@@ -5,12 +5,15 @@ from decimal import Decimal
 def formatar_decimal(valor):
     return f"{valor:.2f}".replace(".", ",")
 
+def carregar_gastos(caminho_arquivo):
+    with open(caminho_arquivo, mode="r", encoding="utf-8-sig") as arquivo:
+        leitor = csv.DictReader(arquivo, delimiter=";")
+        return list(leitor)
+
 pasta_projeto = Path(__file__).resolve().parent
 caminho_arquivo = pasta_projeto / "dados" / "gastos.csv"
 
-with open(caminho_arquivo, mode = "r", encoding="utf-8-sig") as arquivo:
-    leitor = csv.DictReader(arquivo, delimiter = ";")
-    gastos = list(leitor)
+gastos = carregar_gastos(caminho_arquivo)
 
 total = Decimal("0.00")
 totais_por_categoria = {}
