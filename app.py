@@ -31,5 +31,11 @@ print(f"Total de gastos: R$ {total_formatado}")
 print("\nTotais por categoria:")
 
 for categoria, subtotal in totais_por_categoria.items():
+    if total != Decimal("0.00"):
+        percentual = (subtotal / total) * 100
+    else:
+        percentual = Decimal("0.00")
+
     subtotal_formatado = f"{subtotal:.2f}".replace(".", ",")
-    print(f"- {categoria}: R$ {subtotal_formatado}")
+    percentual_formatado = f"{percentual:.2f}".replace(".", ",")
+    print(f"- {categoria}: R$ {subtotal_formatado} ({percentual_formatado}%)")
