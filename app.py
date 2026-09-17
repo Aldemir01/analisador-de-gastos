@@ -2,6 +2,9 @@ import csv
 from pathlib import Path
 from decimal import Decimal
 
+def formatar_decimal(valor):
+    return f"{valor:.2f}".replace(".", ",")
+
 pasta_projeto = Path(__file__).resolve().parent
 caminho_arquivo = pasta_projeto / "dados" / "gastos.csv"
 
@@ -23,7 +26,7 @@ for gasto in gastos:
 
     totais_por_categoria[categoria] += valor
 
-total_formatado = f"{total:.2f}".replace(".", ",")
+total_formatado = formatar_decimal(total)
 
 print(f"Quantidade de gastos: {len(gastos)}")
 print(f"Total de gastos: R$ {total_formatado}")
@@ -36,6 +39,6 @@ for categoria, subtotal in totais_por_categoria.items():
     else:
         percentual = Decimal("0.00")
 
-    subtotal_formatado = f"{subtotal:.2f}".replace(".", ",")
-    percentual_formatado = f"{percentual:.2f}".replace(".", ",")
+    subtotal_formatado = formatar_decimal(subtotal)
+    percentual_formatado = formatar_decimal(percentual)
     print(f"- {categoria}: R$ {subtotal_formatado} ({percentual_formatado}%)")
