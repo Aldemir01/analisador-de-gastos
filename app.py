@@ -1,6 +1,6 @@
 import csv
 from pathlib import Path
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 def formatar_decimal(valor):
     return f"{valor:.2f}".replace(".", ",")
@@ -14,10 +14,16 @@ def calcular_totais(gastos):
     total = Decimal("0.00")
     totais_por_categoria = {}
 
-    for gasto in gastos:
-        valor = Decimal(gasto["valor"])
-        categoria = gasto["categoria"]
+    for numero_linha, gasto in enumerate(gastos, start=2):
+        try:
+            valor = Decimal(gasto["valor"])
+        except InvalidOperation:
+            raise ValueError(f"Linha {numero_linha}: valor inválido '{gasto['valor']}' . Use um número como 150.50.") from None
+        
+        if not valor.is_finite():
+            raise ValueError(f"Linha {numero_linha}: o valor deve ser um número finito.")
 
+        categoria = gasto["categoria"]
         total += valor
 
         if categoria not in totais_por_categoria:
@@ -52,8 +58,13 @@ def exibir_relatorio(gastos, total, totais_por_categoria):
 pasta_projeto = Path(__file__).resolve().parent
 caminho_arquivo = pasta_projeto / "dados" / "gastos.csv"
 
-gastos = carregar_gastos(caminho_arquivo)
-
-total, totais_por_categoria = calcular_totais(gastos)
-
-exibir_relatorio(gastos, total, totais_por_categoria)
+try:
+    gastos = carregar_gastos(caminho_arquivo)
+    total, totais_por_categoria = calcular_totais(gastos)
+except FileNotFoundError:
+    print("Não foi possível encontrar o arquivo de gastos.")
+    print(f"Verifique se o arquivo existe no caminho: {caminho_arquivo}")
+except ValueError as erro:
+    print(f"Não foi possível gerar o relatório: {erro}")
+else:
+    exibir_relatorio(gastos, total, totais_por_categoria)
