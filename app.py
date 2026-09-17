@@ -27,6 +27,28 @@ def calcular_totais(gastos):
 
     return total, totais_por_categoria
 
+def exibir_relatorio(gastos, total, totais_por_categoria):
+    total_formatado = formatar_decimal(total)
+
+    print(f"Quantidade de gastos: {len(gastos)}")
+    print(f"Total gasto: R$ {total_formatado}")
+
+    print("\nGastos por categoria:")
+
+    for categoria, subtotal in totais_por_categoria.items():
+        if total != Decimal("0.00"):
+            percentual = (subtotal / total) * 100
+        else:
+            percentual = Decimal("0.00")
+
+        subtotal_formatado = formatar_decimal(subtotal)
+        percentual_formatado = formatar_decimal(percentual)
+
+        print(
+            f"\n- {categoria}: R$ {subtotal_formatado}" 
+            f"({percentual_formatado}%)"
+        )
+
 pasta_projeto = Path(__file__).resolve().parent
 caminho_arquivo = pasta_projeto / "dados" / "gastos.csv"
 
@@ -34,19 +56,4 @@ gastos = carregar_gastos(caminho_arquivo)
 
 total, totais_por_categoria = calcular_totais(gastos)
 
-total_formatado = formatar_decimal(total)
-
-print(f"Quantidade de gastos: {len(gastos)}")
-print(f"Total de gastos: R$ {total_formatado}")
-
-print("\nTotais por categoria:")
-
-for categoria, subtotal in totais_por_categoria.items():
-    if total != Decimal("0.00"):
-        percentual = (subtotal / total) * 100
-    else:
-        percentual = Decimal("0.00")
-
-    subtotal_formatado = formatar_decimal(subtotal)
-    percentual_formatado = formatar_decimal(percentual)
-    print(f"- {categoria}: R$ {subtotal_formatado} ({percentual_formatado}%)")
+exibir_relatorio(gastos, total, totais_por_categoria)
