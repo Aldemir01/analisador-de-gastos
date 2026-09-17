@@ -10,24 +10,29 @@ def carregar_gastos(caminho_arquivo):
         leitor = csv.DictReader(arquivo, delimiter=";")
         return list(leitor)
 
+def calcular_totais(gastos):
+    total = Decimal("0.00")
+    totais_por_categoria = {}
+
+    for gasto in gastos:
+        valor = Decimal(gasto["valor"])
+        categoria = gasto["categoria"]
+
+        total += valor
+
+        if categoria not in totais_por_categoria:
+            totais_por_categoria[categoria] = Decimal("0.00")
+
+        totais_por_categoria[categoria] += valor
+
+    return total, totais_por_categoria
+
 pasta_projeto = Path(__file__).resolve().parent
 caminho_arquivo = pasta_projeto / "dados" / "gastos.csv"
 
 gastos = carregar_gastos(caminho_arquivo)
 
-total = Decimal("0.00")
-totais_por_categoria = {}
-
-for gasto in gastos:
-    valor = Decimal(gasto["valor"])
-    categoria = gasto["categoria"]
-
-    total += valor
-
-    if categoria not in totais_por_categoria:
-        totais_por_categoria[categoria] = Decimal("0.00")
-
-    totais_por_categoria[categoria] += valor
+total, totais_por_categoria = calcular_totais(gastos)
 
 total_formatado = formatar_decimal(total)
 
