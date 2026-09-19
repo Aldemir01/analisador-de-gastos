@@ -79,16 +79,20 @@ def exibir_relatorio(gastos, total, totais_por_categoria):
             f"({percentual_formatado}%)"
         )
 
-pasta_projeto = Path(__file__).resolve().parent
-caminho_arquivo = pasta_projeto / "dados" / "gastos.csv"
+def main():
+    pasta_projeto = Path(__file__).resolve().parent
+    caminho_arquivo = pasta_projeto / "dados" / "gastos.csv"
 
-try:
-    gastos = carregar_gastos(caminho_arquivo)
-    total, totais_por_categoria = calcular_totais(gastos)
-except FileNotFoundError:
-    print("Não foi possível encontrar o arquivo de gastos.")
-    print(f"Verifique se o arquivo existe no caminho: {caminho_arquivo}")
-except ValueError as erro:
-    print(f"Não foi possível gerar o relatório: {erro}")
-else:
-    exibir_relatorio(gastos, total, totais_por_categoria)
+    try:
+        gastos = carregar_gastos(caminho_arquivo)
+        total, totais_por_categoria = calcular_totais(gastos)
+    except FileNotFoundError:
+        print("Não foi possível encontrar o arquivo de gastos.")
+        print(f"Verifique se o arquivo existe no caminho: {caminho_arquivo}")
+    except ValueError as erro:
+        print(f"Não foi possível gerar o relatório: {erro}")
+    else:
+        exibir_relatorio(gastos, total, totais_por_categoria)
+
+if __name__ == "__main__":
+    main()
