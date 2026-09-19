@@ -57,13 +57,8 @@ def calcular_totais(gastos):
 
     return total, totais_por_categoria
 
-def exibir_relatorio(gastos, total, totais_por_categoria):
-    total_formatado = formatar_decimal(total)
-
-    print(f"Quantidade de gastos: {len(gastos)}")
-    print(f"Total gasto: R$ {total_formatado}")
-
-    print("\nGastos por categoria:")
+def preparar_resumo(total, totais_por_categoria):
+    resumo = []
 
     for categoria, subtotal in totais_por_categoria.items():
         if total != Decimal("0.00"):
@@ -71,8 +66,27 @@ def exibir_relatorio(gastos, total, totais_por_categoria):
         else:
             percentual = Decimal("0.00")
 
-        subtotal_formatado = formatar_decimal(subtotal)
-        percentual_formatado = formatar_decimal(percentual)
+        resumo.append({
+            "categoria": categoria,
+            "subtotal": subtotal,
+            "percentual": percentual
+        })
+
+    return resumo
+
+def exibir_relatorio(gastos, total, resumo):
+    total_formatado = formatar_decimal(total)
+
+    print(f"Quantidade de gastos: {len(gastos)}")
+    print(f"Total gasto: R$ {total_formatado}")
+
+    print("\nGastos por categoria:")
+
+    for item in resumo:
+        categoria = item["categoria"]
+        
+        subtotal_formatado = formatar_decimal(item["subtotal"])
+        percentual_formatado = formatar_decimal(item["percentual"])
 
         print(
             f"\n- {categoria}: R$ {subtotal_formatado}" 
@@ -92,7 +106,8 @@ def main():
     except ValueError as erro:
         print(f"Não foi possível gerar o relatório: {erro}")
     else:
-        exibir_relatorio(gastos, total, totais_por_categoria)
+        resumo = preparar_resumo(total, totais_por_categoria)
+        exibir_relatorio(gastos, total, resumo)
 
 if __name__ == "__main__":
     main()
