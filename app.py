@@ -8,7 +8,31 @@ def formatar_decimal(valor):
 def carregar_gastos(caminho_arquivo):
     with open(caminho_arquivo, mode="r", encoding="utf-8-sig") as arquivo:
         leitor = csv.DictReader(arquivo, delimiter=";")
-        return list(leitor)
+
+        colunas_obrigatorias = {"data", "descricao","categoria", "valor"}
+        
+        colunas_encontradas = set(leitor.fieldnames or [])
+
+        colunas_faltantes = colunas_obrigatorias - colunas_encontradas
+
+        if colunas_faltantes:
+            nomes = ", ".join(sorted(colunas_faltantes))
+            raise ValueError(f"Colunas obrigatórias ausentes: {nomes}")
+
+        gastos = []
+
+        for numero_linha, gasto in enumerate(leitor, start=2):
+            for coluna in sorted(colunas_obrigatorias):
+                conteudo = gasto[coluna]
+
+                if conteudo is None or conteudo.strip() == "":
+                    raise ValueError(f"Linha {numero_linha}: o campo '{coluna}' está vazio.")
+
+                gasto[coluna] = conteudo.strip()
+
+            gastos.append(gasto)
+
+        return gastos
 
 def calcular_totais(gastos):
     total = Decimal("0.00")
