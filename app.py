@@ -74,6 +74,13 @@ def preparar_resumo(total, totais_por_categoria):
 
     return resumo
 
+def executar_analise(caminho_arquivo):
+    gastos = carregar_gastos(caminho_arquivo)
+    total, totais_por_categoria = calcular_totais(gastos)
+    resumo = preparar_resumo(total, totais_por_categoria)
+
+    return gastos, total, resumo
+
 def exibir_relatorio(gastos, total, resumo):
     total_formatado = formatar_decimal(total)
 
@@ -98,15 +105,13 @@ def main():
     caminho_arquivo = pasta_projeto / "dados" / "gastos.csv"
 
     try:
-        gastos = carregar_gastos(caminho_arquivo)
-        total, totais_por_categoria = calcular_totais(gastos)
+        gastos, total, resumo = executar_analise(caminho_arquivo)
     except FileNotFoundError:
         print("Não foi possível encontrar o arquivo de gastos.")
         print(f"Verifique se o arquivo existe no caminho: {caminho_arquivo}")
     except ValueError as erro:
         print(f"Não foi possível gerar o relatório: {erro}")
     else:
-        resumo = preparar_resumo(total, totais_por_categoria)
         exibir_relatorio(gastos, total, resumo)
 
 if __name__ == "__main__":
