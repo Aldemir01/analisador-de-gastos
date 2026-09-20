@@ -1,5 +1,6 @@
 from pathlib import Path
 import streamlit as st
+import plotly.express as px
 
 from app import executar_analise, formatar_decimal
 
@@ -28,11 +29,30 @@ else:
     st.subheader("Gastos por categoria")
 
     dados_tabela = []
+    dados_grafico = []
+    dados_pizza = []
+
     for item in resumo:
         dados_tabela.append({
             "Categoria": item["categoria"],
             "Subtotal": f"R$ {formatar_decimal(item['subtotal'])}",
             "Percentual": f"{formatar_decimal(item['percentual'])}%",
         })
-
+        dados_grafico.append({
+            "categoria": item["categoria"],
+            "subtotal": float(item["subtotal"])
+        })
+        dados_pizza.append({
+            "categoria": item["categoria"],
+            "percentual": float(item["percentual"])
+        })
     st.table(dados_tabela)
+
+    st.subheader("Percentual dos Gastos")
+
+    figura_pizza = px.pie(dados_pizza, names="categoria", values="percentual", title="Percentual dos Gastos por Categoria")
+    st.plotly_chart(figura_pizza, width='stretch')
+
+    st.subheader("Distribuição de Gastos")
+
+    st.bar_chart(data=dados_grafico, x="categoria", y="subtotal")
