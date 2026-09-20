@@ -17,14 +17,22 @@ except FileNotFoundError:
 except ValueError as erro:
     st.error(f"Não foi possível gerar o relatório: {erro}")
 else:
-    st.metric("Quantidade de gastos", len(gastos))
-    st.metric("Total gasto", f"R$ {formatar_decimal(total)}")
+    
+    coluna_quantidade, coluna_total = st.columns(2)
+
+    with coluna_quantidade:
+        st.metric("Quantidade de gastos", len(gastos))
+    with coluna_total:
+        st.metric("Total gasto", f"R$ {formatar_decimal(total)}")
 
     st.subheader("Gastos por categoria")
 
+    dados_tabela = []
     for item in resumo:
-        categoria = item["categoria"]
-        subtotal = formatar_decimal(item["subtotal"])
-        percentual = formatar_decimal(item["percentual"])
+        dados_tabela.append({
+            "Categoria": item["categoria"],
+            "Subtotal": f"R$ {formatar_decimal(item['subtotal'])}",
+            "Percentual": f"{formatar_decimal(item['percentual'])}%",
+        })
 
-        st.write(f"- {categoria}: R$ {subtotal} ({percentual}%)")
+    st.table(dados_tabela)
