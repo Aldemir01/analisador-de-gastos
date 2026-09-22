@@ -1,14 +1,22 @@
 from pathlib import Path
 import streamlit as st
 import plotly.express as px
+import tempfile
 
 from app import executar_analise, formatar_decimal
 
 st.title("Analisador de Gastos")
 st.write("Acompanhe suas despesas e descubra quanto você está gastando em cada categoria.")
 
-pasta_projeto = Path(__file__).resolve().parent
-caminho_arquivo = pasta_projeto / "dados" / "gastos.csv"
+arquivo_enviado = st.file_uploader("Envie seu arquivo CSV de gastos", type=["csv"])
+
+if arquivo_enviado is None:
+    st.info("Envie um arquivo CSV para visualizar a análise.")
+    st.stop()
+
+with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as arquivo_temporario:
+    arquivo_temporario.write(arquivo_enviado.getvalue())
+    caminho_arquivo = Path(arquivo_temporario.name)
 
 try:
     gastos, total, resumo = executar_analise(caminho_arquivo)
