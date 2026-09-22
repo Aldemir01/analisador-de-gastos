@@ -34,6 +34,10 @@ else:
     with coluna_total:
         st.metric("Total gasto", f"R$ {formatar_decimal(total)}")
 
+    st.subheader("Transações Identificadas")
+
+    st.dataframe(gastos, hide_index=True, width='stretch')
+
     st.subheader("Gastos por categoria")
 
     dados_tabela = []
